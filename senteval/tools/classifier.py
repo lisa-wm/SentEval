@@ -14,7 +14,8 @@ from __future__ import absolute_import, division, unicode_literals
 
 import numpy as np
 import copy
-from senteval import utils
+from SentEval_uncertainty.senteval import utils
+from SentEval_uncertainty.senteval.tools.eval_metrics import *
 
 import torch
 from torch import nn
@@ -111,6 +112,7 @@ class PyTorchClassifier(object):
     def score(self, devX, devy):
         self.model.eval()
         correct = 0
+        ece, ace, sce, tace, maxce, oece = [], [], [], [], [], []
         if not isinstance(devX, torch.cuda.FloatTensor) or self.cudaEfficient:
             devX = torch.FloatTensor(devX).cuda()
             devy = torch.LongTensor(devy).cuda()
@@ -124,8 +126,22 @@ class PyTorchClassifier(object):
                 output = self.model(Xbatch)
                 pred = output.data.max(1)[1]
                 correct += pred.long().eq(ybatch.data.long()).sum().item()
+                ece.append(ECELoss().loss(output, ybatch.data))
+                ace.append(ACELoss().loss(output, ybatch.data))
+                sce.append(SCELoss().loss(output, ybatch.data))
+                tace.append(TACELoss().loss(output, ybatch.data))
+                maxce.append(MCELoss().loss(output, ybatch.data))
+                oece.append(OELoss().loss(output, ybatch.data))
             accuracy = 1.0 * correct / len(devX)
-        return accuracy
+            ce = {
+                'ece': sum(ece) / len(ece),
+                'ace': sum(ace) / len(ace),
+                'sce': sum(sce) / len(sce),
+                'tace': sum(tace) / len(tace),
+                'maxce': sum(maxce) / len(maxce),
+                'oece': sum(oece) / len(oece),
+            }
+        return accuracy, ce
 
     def predict(self, devX):
         self.model.eval()

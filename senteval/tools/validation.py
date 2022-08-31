@@ -16,7 +16,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 import logging
 import numpy as np
-from senteval.tools.classifier import MLP
+from SentEval_uncertainty.senteval.tools.classifier import MLP
 
 import sklearn
 assert(sklearn.__version__ >= "0.18.0"), \
@@ -48,6 +48,7 @@ class InnerKFoldClassifier(object):
         self.seed = config['seed']
         self.devresults = []
         self.testresults = []
+        self.uncresults = {}
         self.usepytorch = config['usepytorch']
         self.classifier_config = config['classifier']
         self.modelname = get_classif_name(self.classifier_config, self.usepytorch)
@@ -83,7 +84,8 @@ class InnerKFoldClassifier(object):
                     else:
                         clf = LogisticRegression(C=reg, random_state=self.seed)
                         clf.fit(X_in_train, y_in_train)
-                    regscores.append(clf.score(X_in_test, y_in_test))
+                    regscore, _ = clf.score(X_in_test, y_in_test)
+                    regscores.append(regscore)
                 scores.append(round(100*np.mean(regscores), 2))
             optreg = regs[np.argmax(scores)]
             logging.info('Best param found at split {0}: l2reg = {1} \
@@ -100,11 +102,30 @@ class InnerKFoldClassifier(object):
                 clf = LogisticRegression(C=optreg, random_state=self.seed)
                 clf.fit(X_train, y_train)
 
-            self.testresults.append(round(100*clf.score(X_test, y_test), 2))
+            acc, unc = clf.score(X_test, y_test)
+
+            self.testresults.append(round(100 * acc, 2))
+            self.uncresults.update({count: unc})
 
         devaccuracy = round(np.mean(self.devresults), 2)
         testaccuracy = round(np.mean(self.testresults), 2)
-        return devaccuracy, testaccuracy
+        ece, ace, sce, tace, maxce, oece = 0., 0., 0., 0., 0., 0.
+        for v in self.uncresults.values():
+            ece += v['ece']
+            ace += v['ace']
+            sce += v['sce']
+            tace += v['tace']
+            maxce += v['maxce']
+            oece += v['oece']
+        avg_unc = {
+            'ece': np.mean(ece),
+            'ace': np.mean(ace),
+            'sce': np.mean(sce),
+            'tace': np.mean(tace),
+            'maxce': np.mean(maxce),
+            'oece': np.mean(oece)
+        }
+        return devaccuracy, testaccuracy, avg_unc
 
 
 class KFoldClassifier(object):
@@ -151,7 +172,7 @@ class KFoldClassifier(object):
                 else:
                     clf = LogisticRegression(C=reg, random_state=self.seed)
                     clf.fit(X_train, y_train)
-                score = clf.score(X_test, y_test)
+                score, _ = clf.score(X_test, y_test)
                 scanscores.append(score)
             # Append mean score
             scores.append(round(100*np.mean(scanscores), 2))
@@ -175,10 +196,10 @@ class KFoldClassifier(object):
             clf.fit(self.train['X'], self.train['y'])
         yhat = clf.predict(self.test['X'])
 
-        testaccuracy = clf.score(self.test['X'], self.test['y'])
+        testaccuracy, testuncertainity = clf.score(self.test['X'], self.test['y'])
         testaccuracy = round(100*testaccuracy, 2)
 
-        return devaccuracy, testaccuracy, yhat
+        return devaccuracy, testaccuracy, yhat, testuncertainity
 
 
 class SplitClassifier(object):
@@ -241,6 +262,6 @@ class SplitClassifier(object):
             clf = LogisticRegression(C=optreg, random_state=self.seed)
             clf.fit(self.X['train'], self.y['train'])
 
-        testaccuracy = clf.score(self.X['test'], self.y['test'])
+        testaccuracy, testuncertainty = clf.score(self.X['test'], self.y['test'])
         testaccuracy = round(100*testaccuracy, 2)
-        return devaccuracy, testaccuracy
+        return devaccuracy, testaccuracy, testuncertainty

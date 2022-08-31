@@ -15,7 +15,7 @@ import os
 import numpy as np
 import logging
 
-from senteval.tools.validation import InnerKFoldClassifier
+from SentEval_uncertainty.senteval.tools.validation import InnerKFoldClassifier
 
 
 class BinaryClassifierEval(object):
@@ -54,10 +54,10 @@ class BinaryClassifierEval(object):
                   'classifier': params.classifier,
                   'nhid': params.nhid, 'kfold': params.kfold}
         clf = InnerKFoldClassifier(enc_input, np.array(sorted_labels), config)
-        devacc, testacc = clf.run()
+        devacc, testacc, uncertainty = clf.run()
         logging.debug('Dev acc : {0} Test acc : {1}\n'.format(devacc, testacc))
         return {'devacc': devacc, 'acc': testacc, 'ndev': self.n_samples,
-                'ntest': self.n_samples}
+                'ntest': self.n_samples, 'unc': uncertainty}
 
 
 class CREval(BinaryClassifierEval):
