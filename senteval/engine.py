@@ -12,16 +12,16 @@ Generic sentence evaluation scripts wrapper
 '''
 from __future__ import absolute_import, division, unicode_literals
 
-from SentEval_uncertainty.senteval import utils
-from SentEval_uncertainty.senteval.binary import CREval, MREval, MPQAEval, SUBJEval
-from SentEval_uncertainty.senteval.snli import SNLIEval
-from SentEval_uncertainty.senteval.trec import TRECEval
-from SentEval_uncertainty.senteval.sick import SICKRelatednessEval, SICKEntailmentEval
-from SentEval_uncertainty.senteval.mrpc import MRPCEval
-from SentEval_uncertainty.senteval.sts import STS12Eval, STS13Eval, STS14Eval, STS15Eval, STS16Eval, STSBenchmarkEval
-from SentEval_uncertainty.senteval.sst import SSTEval
-from SentEval_uncertainty.senteval.rank import ImageCaptionRetrievalEval
-from SentEval_uncertainty.senteval.probing import *
+from SentEval.senteval import utils
+from SentEval.senteval.binary import CREval, MREval, MPQAEval, SUBJEval
+from SentEval.senteval.snli import SNLIEval
+from SentEval.senteval.trec import TRECEval
+from SentEval.senteval.sick import SICKRelatednessEval, SICKEntailmentEval
+from SentEval.senteval.mrpc import MRPCEval
+from SentEval.senteval.sts import STS12Eval, STS13Eval, STS14Eval, STS15Eval, STS16Eval, STSBenchmarkEval
+from SentEval.senteval.sst import SSTEval
+from SentEval.senteval.rank import ImageCaptionRetrievalEval
+from SentEval.senteval.probing import *
 
 class SE(object):
     def __init__(self, params, batcher, prepare=None):
