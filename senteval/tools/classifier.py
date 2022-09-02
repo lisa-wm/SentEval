@@ -15,7 +15,7 @@ from __future__ import absolute_import, division, unicode_literals
 import numpy as np
 import copy
 from SentEval_uncertainty.senteval import utils
-from SentEval_uncertainty.senteval.tools.eval_metrics import *
+from Uncertainty_aware_SSL.utils.metrics import *
 
 import torch
 from torch import nn
