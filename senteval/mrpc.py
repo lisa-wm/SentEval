@@ -15,7 +15,7 @@ import logging
 import numpy as np
 import io
 
-from SentEval_uncertainty.senteval.tools.validation import KFoldClassifier
+from SentEval.senteval.tools.validation import KFoldClassifier
 
 from sklearn.metrics import f1_score
 

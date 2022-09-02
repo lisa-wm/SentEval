@@ -16,7 +16,7 @@ import io
 import logging
 import numpy as np
 
-from SentEval_uncertainty.senteval.tools.validation import KFoldClassifier
+from SentEval.senteval.tools.validation import KFoldClassifier
 
 
 class TRECEval(object):
