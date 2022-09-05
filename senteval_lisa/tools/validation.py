@@ -240,8 +240,8 @@ class SplitClassifier(object):
             else:
                 clf = LogisticRegression(C=reg, random_state=self.seed)
                 clf.fit(self.X['train'], self.y['train'])
-            scores.append(round(100*clf.score(self.X['valid'],
-                                self.y['valid']), 2))
+            acc, _ = clf.score(self.X['valid'], self.y['valid'])
+            scores.append(round(100*acc, 2))
         logging.info([('reg:'+str(regs[idx]), scores[idx])
                       for idx in range(len(scores))])
         optreg = regs[np.argmax(scores)]
