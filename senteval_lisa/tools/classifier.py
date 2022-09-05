@@ -14,7 +14,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 import numpy as np
 import copy
-from SentEval.senteval_lisa import utils
+from SentEval.senteval_lisa.utils import get_optimizer
 from Uncertainty_aware_SSL.utils.metrics import *
 
 import torch
@@ -213,6 +213,6 @@ class MLP(PyTorchClassifier):
         self.loss_fn = nn.CrossEntropyLoss().cuda()
         self.loss_fn.size_average = False
 
-        optim_fn, optim_params = utils.get_optimizer(self.optim)
+        optim_fn, optim_params = get_optimizer(self.optim)
         self.optimizer = optim_fn(self.model.parameters(), **optim_params)
         self.optimizer.param_groups[0]['weight_decay'] = self.l2reg
