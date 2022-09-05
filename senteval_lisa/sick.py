@@ -18,8 +18,8 @@ import numpy as np
 from sklearn.metrics import mean_squared_error
 from scipy.stats import pearsonr, spearmanr
 
-from SentEval.senteval.tools.relatedness import RelatednessPytorch
-from SentEval.senteval.tools.validation import SplitClassifier
+from SentEval.senteval_lisa.tools.relatedness import RelatednessPytorch
+from SentEval.senteval_lisa.tools.validation import SplitClassifier
 
 
 class SICKRelatednessEval(object):

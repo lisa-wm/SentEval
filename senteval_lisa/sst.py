@@ -16,7 +16,7 @@ import io
 import logging
 import numpy as np
 
-from SentEval.senteval.tools.validation import SplitClassifier
+from SentEval.senteval_lisa.tools.validation import SplitClassifier
 
 
 class SSTEval(object):
