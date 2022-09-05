@@ -22,7 +22,7 @@ import copy
 import logging
 import numpy as np
 
-from senteval.tools.validation import SplitClassifier
+from SentEval.senteval.tools.validation import SplitClassifier
 
 
 class PROBINGEval(object):
