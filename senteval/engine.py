@@ -1,3 +1,8 @@
+#
+# SPDX-FileCopyrightText: 2017 Facebook, Inc.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -12,16 +17,18 @@ Generic sentence evaluation scripts wrapper
 '''
 from __future__ import absolute_import, division, unicode_literals
 
-from SentEval.senteval import utils
-from SentEval.senteval.binary import CREval, MREval, MPQAEval, SUBJEval
-from SentEval.senteval.snli import SNLIEval
-from SentEval.senteval.trec import TRECEval
-from SentEval.senteval.sick import SICKRelatednessEval, SICKEntailmentEval
-from SentEval.senteval.mrpc import MRPCEval
-from SentEval.senteval.sts import STS12Eval, STS13Eval, STS14Eval, STS15Eval, STS16Eval, STSBenchmarkEval
-from SentEval.senteval.sst import SSTEval
-from SentEval.senteval.rank import ImageCaptionRetrievalEval
-from SentEval.senteval.probing import *
+from senteval import utils
+from senteval.binary import CREval, MREval, MPQAEval, SUBJEval
+from senteval.snli import SNLIEval
+from senteval.trec import TRECEval
+from senteval.sick import SICKEntailmentEval, SICKEval
+from senteval.mrpc import MRPCEval
+from senteval.sts import STS12Eval, STS13Eval, STS14Eval, STS15Eval, STS16Eval, STSBenchmarkEval, SICKRelatednessEval, STSBenchmarkFinetune
+from senteval.sst import SSTEval
+from senteval.rank import ImageCaptionRetrievalEval
+from senteval.probing import *
+
+from senteval.sts_filter import STSFilterBenchmarkEval 
 
 class SE(object):
     def __init__(self, params, batcher, prepare=None):
@@ -46,12 +53,12 @@ class SE(object):
         self.prepare = prepare if prepare else lambda x, y: None
 
         self.list_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC',
-                           'SICKRelatedness', 'SICKEntailment', 'STSBenchmark',
+                           'SICKRelatedness', 'SICKEntailment', 'STSBenchmark', "STSFilterBenchmark",
                            'SNLI', 'ImageCaptionRetrieval', 'STS12', 'STS13',
                            'STS14', 'STS15', 'STS16',
                            'Length', 'WordContent', 'Depth', 'TopConstituents',
                            'BigramShift', 'Tense', 'SubjNumber', 'ObjNumber',
-                           'OddManOut', 'CoordinationInversion']
+                           'OddManOut', 'CoordinationInversion', 'SICKRelatedness-finetune', 'STSBenchmark-finetune', 'STSBenchmark-fix']
 
     def eval(self, name):
         # evaluate on evaluation [name], either takes string or list of strings
@@ -83,6 +90,14 @@ class SE(object):
             self.evaluation = SICKRelatednessEval(tpath + '/downstream/SICK', seed=self.params.seed)
         elif name == 'STSBenchmark':
             self.evaluation = STSBenchmarkEval(tpath + '/downstream/STS/STSBenchmark', seed=self.params.seed)
+        elif name == 'STSFilterBenchmark':
+            self.evaluation = STSFilterBenchmarkEval(tpath + '/downstream/STS/STSBenchmark', seed=self.params.seed)
+        elif name == 'STSBenchmark-fix':
+            self.evaluation = STSBenchmarkEval(tpath + '/downstream/STS/STSBenchmark-fix', seed=self.params.seed)
+        elif name == 'STSBenchmark-finetune':
+            self.evaluation = STSBenchmarkFinetune(tpath + '/downstream/STS/STSBenchmark', seed=self.params.seed)
+        elif name == 'SICKRelatedness-finetune':
+            self.evaluation = SICKEval(tpath + '/downstream/SICK', seed=self.params.seed)
         elif name == 'SICKEntailment':
             self.evaluation = SICKEntailmentEval(tpath + '/downstream/SICK', seed=self.params.seed)
         elif name == 'SNLI':

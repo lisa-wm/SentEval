@@ -1,3 +1,8 @@
+#
+# SPDX-FileCopyrightText: 2017 Facebook, Inc.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -15,7 +20,7 @@ import os
 import numpy as np
 import logging
 
-from SentEval.senteval.tools.validation import InnerKFoldClassifier
+from senteval.tools.validation import InnerKFoldClassifier
 
 
 class BinaryClassifierEval(object):
@@ -54,10 +59,10 @@ class BinaryClassifierEval(object):
                   'classifier': params.classifier,
                   'nhid': params.nhid, 'kfold': params.kfold}
         clf = InnerKFoldClassifier(enc_input, np.array(sorted_labels), config)
-        devacc, testacc, uncertainty = clf.run()
+        devacc, testacc = clf.run()
         logging.debug('Dev acc : {0} Test acc : {1}\n'.format(devacc, testacc))
         return {'devacc': devacc, 'acc': testacc, 'ndev': self.n_samples,
-                'ntest': self.n_samples, 'unc': uncertainty}
+                'ntest': self.n_samples}
 
 
 class CREval(BinaryClassifierEval):

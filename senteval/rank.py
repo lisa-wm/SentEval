@@ -1,3 +1,8 @@
+#
+# SPDX-FileCopyrightText: 2017 Facebook, Inc.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -20,7 +25,7 @@ try:
 except ImportError:
     import pickle
 
-from SentEval.senteval.tools.ranking import ImageSentenceRankingPytorch
+from senteval.tools.ranking import ImageSentenceRankingPytorch
 
 
 class ImageCaptionRetrievalEval(object):

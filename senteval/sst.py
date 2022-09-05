@@ -1,3 +1,8 @@
+#
+# SPDX-FileCopyrightText: 2017 Facebook, Inc.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -16,7 +21,7 @@ import io
 import logging
 import numpy as np
 
-from SentEval.senteval.tools.validation import SplitClassifier
+from senteval.tools.validation import SplitClassifier
 
 
 class SSTEval(object):
@@ -87,11 +92,10 @@ class SSTEval(object):
                                  'test': sst_embed['test']['y']},
                               config=config_classifier)
 
-        devacc, testacc, unc = clf.run()
+        devacc, testacc = clf.run()
         logging.debug('\nDev acc : {0} Test acc : {1} for \
             SST {2} classification\n'.format(devacc, testacc, self.task_name))
 
         return {'devacc': devacc, 'acc': testacc,
                 'ndev': len(sst_embed['dev']['X']),
-                'ntest': len(sst_embed['test']['X']),
-                'unc': unc}
+                'ntest': len(sst_embed['test']['X'])}

@@ -1,3 +1,8 @@
+#
+# SPDX-FileCopyrightText: 2017 Facebook, Inc.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -14,8 +19,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 import numpy as np
 import copy
-from SentEval.senteval import utils
-from Uncertainty_aware_SSL.utils.metrics import *
+from senteval import utils
 
 import torch
 from torch import nn
@@ -112,7 +116,6 @@ class PyTorchClassifier(object):
     def score(self, devX, devy):
         self.model.eval()
         correct = 0
-        ece, ace, sce, tace, maxce, oece = [], [], [], [], [], []
         if not isinstance(devX, torch.cuda.FloatTensor) or self.cudaEfficient:
             devX = torch.FloatTensor(devX).cuda()
             devy = torch.LongTensor(devy).cuda()
@@ -126,22 +129,8 @@ class PyTorchClassifier(object):
                 output = self.model(Xbatch)
                 pred = output.data.max(1)[1]
                 correct += pred.long().eq(ybatch.data.long()).sum().item()
-                ece.append(ECELoss().loss(output, ybatch.data))
-                ace.append(ACELoss().loss(output, ybatch.data))
-                sce.append(SCELoss().loss(output, ybatch.data))
-                tace.append(TACELoss().loss(output, ybatch.data))
-                maxce.append(MCELoss().loss(output, ybatch.data))
-                oece.append(OELoss().loss(output, ybatch.data))
             accuracy = 1.0 * correct / len(devX)
-            ce = {
-                'ece': sum(ece) / len(ece),
-                'ace': sum(ace) / len(ace),
-                'sce': sum(sce) / len(sce),
-                'tace': sum(tace) / len(tace),
-                'maxce': sum(maxce) / len(maxce),
-                'oece': sum(oece) / len(oece),
-            }
-        return accuracy, ce
+        return accuracy
 
     def predict(self, devX):
         self.model.eval()

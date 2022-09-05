@@ -1,3 +1,8 @@
+#
+# SPDX-FileCopyrightText: 2017 Facebook, Inc.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -17,7 +22,7 @@ import copy
 import logging
 import numpy as np
 
-from SentEval.senteval.tools.validation import SplitClassifier
+from senteval.tools.validation import SplitClassifier
 
 
 class SNLIEval(object):

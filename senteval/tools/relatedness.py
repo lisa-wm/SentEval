@@ -1,3 +1,8 @@
+#
+# SPDX-FileCopyrightText: 2017 Facebook, Inc.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -17,7 +22,7 @@ import torch
 from torch import nn
 import torch.optim as optim
 
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, spearmanr
 
 
 class RelatednessPytorch(object):
@@ -84,7 +89,7 @@ class RelatednessPytorch(object):
         while not stop_train and self.nepoch <= self.maxepoch:
             self.trainepoch(trainX, trainy, nepoches=50)
             yhat = np.dot(self.predict_proba(devX), r)
-            pr = pearsonr(yhat, self.devscores)[0]
+            pr = spearmanr(yhat, self.devscores)[0]
             pr = 0 if pr != pr else pr  # if NaN bc std=0
             # early stop on Pearson
             if pr > bestpr:
