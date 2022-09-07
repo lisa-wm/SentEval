@@ -112,7 +112,7 @@ class PyTorchClassifier(object):
     def score(self, devX, devy):
         self.model.eval()
         correct = 0
-        ece, ace, sce, tace, maxce, oece = [], [], [], [], [], []
+        ece, ace, sce, tace, maxce, oece, nll = [], [], [], [], [], [], []
         if not isinstance(devX, torch.cuda.FloatTensor) or self.cudaEfficient:
             devX = torch.FloatTensor(devX).cuda()
             devy = torch.LongTensor(devy).cuda()
@@ -132,6 +132,7 @@ class PyTorchClassifier(object):
                 tace.append(TACELoss().loss(output, ybatch.data))
                 maxce.append(MCELoss().loss(output, ybatch.data))
                 oece.append(OELoss().loss(output, ybatch.data))
+                nll.append(compute_nll(output, ybatch.data))
             accuracy = 1.0 * correct / len(devX)
             ce = {
                 'ece': sum(ece) / len(ece),
@@ -140,6 +141,7 @@ class PyTorchClassifier(object):
                 'tace': sum(tace) / len(tace),
                 'maxce': sum(maxce) / len(maxce),
                 'oece': sum(oece) / len(oece),
+                'nll': sum(nll) / len(nll)
             }
         return accuracy, ce
 

@@ -109,7 +109,7 @@ class InnerKFoldClassifier(object):
 
         devaccuracy = round(np.mean(self.devresults), 2)
         testaccuracy = round(np.mean(self.testresults), 2)
-        ece, ace, sce, tace, maxce, oece = 0., 0., 0., 0., 0., 0.
+        ece, ace, sce, tace, maxce, oece, nll = 0., 0., 0., 0., 0., 0., 0.
         for v in self.uncresults.values():
             ece += v['ece']
             ace += v['ace']
@@ -117,13 +117,15 @@ class InnerKFoldClassifier(object):
             tace += v['tace']
             maxce += v['maxce']
             oece += v['oece']
+            nll += v['nll']
         avg_unc = {
             'ece': np.mean(ece),
             'ace': np.mean(ace),
             'sce': np.mean(sce),
             'tace': np.mean(tace),
             'maxce': np.mean(maxce),
-            'oece': np.mean(oece)
+            'oece': np.mean(oece),
+            'nll': np.mean(nll)
         }
         return devaccuracy, testaccuracy, avg_unc
 
