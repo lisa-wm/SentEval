@@ -118,14 +118,15 @@ class InnerKFoldClassifier(object):
             maxce += v['maxce']
             oece += v['oece']
             nll += v['nll']
+        n_evals = len([v for v in self.uncresults.values()])
         avg_unc = {
-            'ece': np.mean(ece),
-            'ace': np.mean(ace),
-            'sce': np.mean(sce),
-            'tace': np.mean(tace),
-            'maxce': np.mean(maxce),
-            'oece': np.mean(oece),
-            'nll': np.mean(nll)
+            'ece': ece / n_evals,
+            'ace': ace / n_evals,
+            'sce': sce / n_evals,
+            'tace': tace / n_evals,
+            'maxce': maxce / n_evals,
+            'oece': oece / n_evals,
+            'nll': nll / n_evals
         }
         return devaccuracy, testaccuracy, avg_unc
 
